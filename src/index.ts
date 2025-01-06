@@ -9,6 +9,8 @@ type Schedule = {
     section: string;
     instructor: string;
     meeting_pattern: string;
+    start_date: string;
+    end_date: string;   
     parsed_schedule: {
         days: ICalWeekday[];
         start_time: string;
@@ -28,9 +30,8 @@ app.post("/:user_id", async (c) => {
 
     const cal = ical();
     for (const course of data) {
-        const todayString = new Date().toISOString().split("T")[0];
-        const startDate = `${todayString}T${course.parsed_schedule.start_time}`;
-        const endDate = `${todayString}T${course.parsed_schedule.end_time}`;
+        const startDate = new Date(`${course.start_date}T${course.parsed_schedule.start_time}`);
+        const endDate = new Date(`${course.end_date}T${course.parsed_schedule.end_time}`);
 
         cal.createEvent({
             start: new Date(startDate),
