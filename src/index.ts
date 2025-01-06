@@ -50,7 +50,10 @@ app.post("/:user_id", async (c) => {
 
     c.header("Content-Type", "text/calendar");
     c.header("Content-Disposition", `attachment; filename="${filename}"`);
-
+    // CORS
+    c.header("Access-Control-Allow-Origin", "*");
+    c.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    c.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     // Write to bucket
     await c.env.MY_BUCKET.put(filename, cal.toString());
 
