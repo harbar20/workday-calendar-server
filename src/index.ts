@@ -1,48 +1,41 @@
 import { Hono } from "hono";
-import ical, { ICalEventRepeatingFreq, ICalWeekday } from "ical-generator";
-
-type Bindings = {
-    MY_BUCKET: R2Bucket;
-};
-
-type Schedule = {
-    section: string;
-    instructor: string;
-    meeting_pattern: string;
-    start_date: string;
-    end_date: string;   
-    parsed_schedule: {
-        days: ICalWeekday[];
-        start_time: string;
-        end_time: string;
-        location: string;
-    };
-    waitlisted: boolean;
-}[];
+import ical, { ICalEventRepeatingFreq } from "ical-generator";
+import { Bindings, Schedule, createDate } from "./utils";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
 app.post("/:user_id", async (c) => {
-    const data = await c.req.json<Schedule>();
+    const data = await c.req.json<Schedule[]>();
     const user_id = c.req.param("user_id");
-
-    const eightWeeks = 8 * 7 * 24 * 60 * 60 * 1000;
 
     const cal = ical();
     for (const course of data) {
-        const startDate = new Date(`${course.start_date}T${course.parsed_schedule.start_time}`);
-        const endDate = new Date(`${course.end_date}T${course.parsed_schedule.end_time}`);
+        // First date and start time of class
+        const startDate = createDate(
+            course.start_date,
+            course.parsed_schedule.start_time
+        );
+        // First date and end time of class
+        const endDate = createDate(
+            course.start_date,
+            course.parsed_schedule.end_time
+        );
+        // Last date and end time of class
+        const lastDate = createDate(
+            course.end_date,
+            course.parsed_schedule.end_time
+        );
 
         cal.createEvent({
-            start: new Date(startDate),
-            end: new Date(endDate),
+            start: startDate,
+            end: endDate,
             summary: `${course.section}`,
             location: course.parsed_schedule.location,
             description: `Course: ${course.section}\n\nInstructor: ${course.instructor}\n\nMeeting Pattern: ${course.meeting_pattern}`,
             repeating: {
                 freq: ICalEventRepeatingFreq.WEEKLY,
                 byDay: course.parsed_schedule.days,
-                until: new Date(Date.now() + eightWeeks),
+                until: lastDate,
             },
         });
     }
