@@ -7,10 +7,12 @@
   },
   "dependencies": {
     "hono": "^4.6.15",
-    "ical-generator": "^8.0.1"
+    "ical-generator": "^8.0.1",
+    "luxon": "^3.5.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241218.0",
+    "@types/luxon": "^3.4.2",
     "wrangler": "^3.96.0"
   }
 }

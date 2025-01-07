@@ -1,4 +1,5 @@
 import { ICalWeekday } from "ical-generator";
+import { DateTime } from "luxon";
 
 export type Bindings = {
     MY_BUCKET: R2Bucket;
@@ -59,13 +60,20 @@ export function createDate(dateStr: string, timeStr: string): Date {
         hour24 = 0;
     }
 
-    // Create date object (month is 0-based in JavaScript)
-    const date = new Date(year, month - 1, day, hour24, minutes);
+    // Create DateTime object with New York timezone
+    const dt = DateTime.fromObject({
+        year,
+        month,
+        day,
+        hour: hour24,
+        minute: minutes
+    }, { zone: 'America/New_York' });
 
-    // Validate the date is real (handles edge cases like 31/4/2024 which isn't a real date)
-    if (date.getMonth() !== month - 1) {
-        throw new Error("Invalid date for the given month. It is currently: " + date);
+    // Validate the date is real
+    if (!dt.isValid) {
+        throw new Error(`Invalid date: ${dt.invalidReason}. Input was: ${dateStr}`);
     }
 
-    return date;
+    // Convert to JS Date for compatibility with ical-generator
+    return dt.toJSDate();
 }
