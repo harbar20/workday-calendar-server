@@ -25,15 +25,15 @@ export function createDate(dateStr: string, timeStr: string): Date {
     const timeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] (am|pm|AM|PM)$/;
 
     if (!dateRegex.test(dateStr)) {
-        throw new Error("Date must be in format DD/MM/YYYY");
+        throw new Error("Date must be in format DD/MM/YYYY. It is currently: " + dateStr);
     }
 
     if (!timeRegex.test(timeStr)) {
-        throw new Error("Time must be in format HH:MM am/pm");
+        throw new Error("Time must be in format HH:MM am/pm. It is currently: " + timeStr);
     }
 
     // Split the date and time components
-    const [day, month, year] = dateStr
+    const [month, day, year] = dateStr
         .split("/")
         .map((num) => parseInt(num, 10));
     const [time, period] = timeStr.toLowerCase().split(" ") as [
@@ -44,12 +44,12 @@ export function createDate(dateStr: string, timeStr: string): Date {
 
     // Validate ranges
     if (month < 1 || month > 12)
-        throw new Error("Month must be between 1 and 12");
-    if (day < 1 || day > 31) throw new Error("Day must be between 1 and 31");
+        throw new Error("Month must be between 1 and 12. It is currently: " + month);
+    if (day < 1 || day > 31) throw new Error("Day must be between 1 and 31. It is currently: " + day);
     if (hours < 1 || hours > 12)
-        throw new Error("Hours must be between 1 and 12");
+        throw new Error("Hours must be between 1 and 12. It is currently: " + hours);
     if (minutes < 0 || minutes > 59)
-        throw new Error("Minutes must be between 0 and 59");
+        throw new Error("Minutes must be between 0 and 59. It is currently: " + minutes);
 
     // Convert to 24-hour format
     let hour24 = hours;
@@ -64,7 +64,7 @@ export function createDate(dateStr: string, timeStr: string): Date {
 
     // Validate the date is real (handles edge cases like 31/4/2024 which isn't a real date)
     if (date.getMonth() !== month - 1) {
-        throw new Error("Invalid date for the given month");
+        throw new Error("Invalid date for the given month. It is currently: " + date);
     }
 
     return date;
