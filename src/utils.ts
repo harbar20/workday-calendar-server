@@ -20,7 +20,7 @@ export type Schedule = {
     waitlisted: boolean;
 };
 
-export function createDate(dateStr: string, timeStr: string): Date {
+export function createDate(dateStr: string, timeStr: string) {
     // Validate input formats using regex
     const dateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
     const timeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] (am|pm|AM|PM)$/;
@@ -75,5 +75,5 @@ export function createDate(dateStr: string, timeStr: string): Date {
     }
 
     // Convert to JS Date for compatibility with ical-generator
-    return dt.toJSDate();
+    return dt;
 }
